@@ -66,13 +66,14 @@ async function updateMarketData(cryptoType) {
         circulatingSupplyElement.textContent = `Circulating Supply: ${marketData.market_data.circulating_supply}`;
         
         marketListElement.innerHTML = '';
-        const majorExchanges = marketData.tickers.filter(ticker => ticker.market.name).slice(0, 5);
+        const majorExchanges = marketData.tickers.slice(0, 5);
         majorExchanges.forEach((ticker, index) => {
             if (index < 4) {
                 const li = document.createElement('li');
                 const img = document.createElement('img');
                 img.src = ticker.market.logo;
                 img.alt = ticker.market.name;
+                img.onerror = () => img.style.display = 'none'; // Hide if image fails to load
                 const span = document.createElement('span');
                 span.textContent = ticker.market.name;
                 li.appendChild(img);
@@ -191,6 +192,9 @@ document.getElementById('download-button').addEventListener('click', function() 
     downloadLink.href = qrCodeCanvas.toDataURL();
     downloadLink.download = `${cryptoType}_qrcode.png`;
     downloadLink.click();
+    // Remove the previous QR code file from the file browser
+    qrCodeCanvas.getContext('2d').clearRect(0, 0, qrCodeCanvas.width, qrCodeCanvas.height);
+    downloadButton.style.display = 'none';
 });
 
 // Initialize with the default selected crypto type
